@@ -209,18 +209,14 @@ contract BondingCurveToken is ERC20, Ownable(msg.sender), ReentrancyGuard {
         emit Graduated(pair, amountTokenAdded, amountReserveAdded);
     }
 
-    function setGraduationThreshold(uint256 newThreshold) external onlyOwner {
-        graduationReserveThreshold = newThreshold;
-    }
-
-    function withdrawReserve(address to, uint256 amount) external onlyOwner {
+    function withdrawLeftoverReserve(address to, uint256 amount) external onlyOwner {
         require(graduated);
         require(amount <= connectorBalance);
         connectorBalance -= amount;
         reserveToken.safeTransfer(to, amount);
     }
 
-    function emergencyDrain(address to) external onlyOwner {
+    function withdrawReserve(address to) external onlyOwner {
         uint256 bal = reserveToken.balanceOf(address(this));
         reserveToken.safeTransfer(to, bal);
         connectorBalance = reserveToken.balanceOf(address(this));
