@@ -178,11 +178,11 @@
 			]
 		},
 		"contracts/BondingCurveFactory.sol": {
-			"keccak256": "0x100a35da29af37872d382e8e06a2fcea309bb935b96a8dfb421fa1bf72c5747e",
+			"keccak256": "0x26eed968ed9c575500eeaf7663203c885913e9f629c72458491a91cb3312a690",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://0151b6e1c0183352ae41f45bc6cd7f3af8fd674f7cf0339f2a0666907fdf95e7",
-				"dweb:/ipfs/QmdnV6x84bvU1xNLEyeA5nn9ZVcAF5YJkZModxeD6nTVDA"
+				"bzz-raw://1f4682d5006dff7abd078bb5f210f4422533c7d7d75c83b11fee2520c825d4e9",
+				"dweb:/ipfs/QmVJUq1344ufkfVkjicpzvDidKZrvERW389zLE3cwZgLHT"
 			]
 		}
 	},

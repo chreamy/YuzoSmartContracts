@@ -147,7 +147,7 @@ contract BondingCurveToken is ERC20, Ownable(msg.sender), ReentrancyGuard {
 
         require(connectorBalance >= reserveOut);
         connectorBalance -= reserveOut;
-
+        remainingRealTokenReserves += tokenAmount;
         reserveToken.safeTransfer(msg.sender, reserveOut);
 
         emit Sold(msg.sender, tokenAmount, reserveOut, tokenAmount);
