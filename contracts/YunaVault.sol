@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "./YunaVaultFactory.sol";
 
 interface IVault {
     function stake(uint256 amount, uint256 blocksToStake) external;
@@ -40,11 +41,11 @@ contract YunaVault is ReentrancyGuard {
 
     // immutable config
     address public immutable protocol; 
+    address public immutable factory;
     address public immutable vaultToken; 
     uint256 public immutable minDeposit;
     uint256 public immutable maxDeposit;
     int256 public immutable xpRate; 
-    uint256 public immutable feeBP = 500;
     uint256[] public presetTimes; // allowed lock lengths (in blocks)
 
     TimeMultiplier[] public timeMultipliers; // ordered by minBlocks asc
@@ -76,6 +77,7 @@ contract YunaVault is ReentrancyGuard {
     constructor(
         address _protocol,
         address _token,
+        address _factory,
         uint256 _minDeposit,
         uint256 _maxDeposit,
         int256 _xpRate,
@@ -92,6 +94,7 @@ contract YunaVault is ReentrancyGuard {
         minDeposit = _minDeposit;
         maxDeposit = _maxDeposit;
         xpRate = _xpRate;
+        factory = _factory;
 
         presetTimes = _presetTimes;
 
@@ -103,8 +106,6 @@ contract YunaVault is ReentrancyGuard {
             amountMultipliers.push(_amountMultipliers[i]);
         }
     }
-
-    // --- staking ---
 
     function allowedPreset(uint256 blocks) public view returns (bool) {
         if (presetTimes.length == 0) return true; // if no preset restrictions, allow any
@@ -148,10 +149,8 @@ contract YunaVault is ReentrancyGuard {
 
     // release all matured positions, caller gets settlement fee (0.25%), protocol gets feeBP (0.5%)
     function releaseAll() external nonReentrant {
-        require(active && !closed, "vault not active");
-
-        uint256 callerFeeBP = 25; // 0.25%
-        uint256 totalBP = feeBP + callerFeeBP; // 0.5% + 0.25% = 0.75%
+        (uint256 feeBP, uint256 callerFeeBP) = getFees();
+        uint256 totalBP = feeBP + callerFeeBP;
         
         for (uint256 posId = 0; posId < positions.length; posId++) {
             Position storage pos = positions[posId];
@@ -189,6 +188,7 @@ contract YunaVault is ReentrancyGuard {
 
 
     function _releaseFor(address user, bool takeFee) internal {
+        (uint256 feeBP,) = getFees();
         uint256[] storage ids = activePositions[user];
         uint256 i = 0;
         while (i < ids.length) {
@@ -230,7 +230,11 @@ contract YunaVault is ReentrancyGuard {
         }
     }
 
-    // helper: compute XP for holder across active+history for this vault's token only
+    function getFees() public view returns (uint256 _protocolFeeBP, uint256 _callerFeeBP) {
+        YunaVaultFactory f = YunaVaultFactory(factory);
+        return (f.protocolFeeBP(), f.callerFeeBP());
+    }
+    
     function getXP(address holder) external view returns (uint256 xp) {
         uint256[] memory act = activePositions[holder];
         uint256[] memory hist = historyPositions[holder];
@@ -298,7 +302,7 @@ contract YunaVault is ReentrancyGuard {
     }
 
     function closeVault() external {
-        require(msg.sender == protocol, "only protocol");
+        require(msg.sender == protocol || msg.sender == factory, "only protocol");
         active = false;
         closed = true;
         emit VaultClosed();
@@ -313,6 +317,10 @@ contract YunaVault is ReentrancyGuard {
     }
     function amountMultipliersLen() external view returns (uint256) {
         return amountMultipliers.length;
+    }
+    
+    function presetTimesLen() external view returns (uint256) {
+    return presetTimes.length;
     }
 
     function positionsLength() external view returns (uint256) {

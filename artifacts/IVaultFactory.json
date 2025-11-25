@@ -1,0 +1,227 @@
+{
+	"deploy": {
+		"VM:-": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"main:1": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"sepolia:11155111": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"Custom": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		}
+	},
+	"data": {
+		"bytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"deployedBytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"immutableReferences": {},
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"gasEstimates": null,
+		"methodIdentifiers": {
+			"callerFeeBP()": "f25e78b1",
+			"closeVault(address)": "c99cb2b7",
+			"createVault(address,uint256,uint256,int256,uint256[],(uint256,uint256)[],(uint256,uint256)[])": "a444477b",
+			"getAllVaults()": "97331bf9",
+			"getVaultByToken(address)": "b1e3a941",
+			"protocol()": "8ce74426",
+			"protocolFeeBP()": "c5fba0b8",
+			"setFees(uint256,uint256)": "0b78f9c0"
+		}
+	},
+	"abi": [
+		{
+			"inputs": [],
+			"name": "callerFeeBP",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "vaultAddr",
+					"type": "address"
+				}
+			],
+			"name": "closeVault",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "token",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "minDeposit",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "maxDeposit",
+					"type": "uint256"
+				},
+				{
+					"internalType": "int256",
+					"name": "xpRate",
+					"type": "int256"
+				},
+				{
+					"internalType": "uint256[]",
+					"name": "presetTimes",
+					"type": "uint256[]"
+				},
+				{
+					"components": [
+						{
+							"internalType": "uint256",
+							"name": "minBlocks",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "multiplierBP",
+							"type": "uint256"
+						}
+					],
+					"internalType": "struct IVaultFactory.TimeMultiplierIn[]",
+					"name": "timeMultipliers",
+					"type": "tuple[]"
+				},
+				{
+					"components": [
+						{
+							"internalType": "uint256",
+							"name": "minAmount",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "multiplierBP",
+							"type": "uint256"
+						}
+					],
+					"internalType": "struct IVaultFactory.AmountMultiplierIn[]",
+					"name": "amountMultipliers",
+					"type": "tuple[]"
+				}
+			],
+			"name": "createVault",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "vaultAddr",
+					"type": "address"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "getAllVaults",
+			"outputs": [
+				{
+					"internalType": "address[]",
+					"name": "",
+					"type": "address[]"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "token",
+					"type": "address"
+				}
+			],
+			"name": "getVaultByToken",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "protocol",
+			"outputs": [
+				{
+					"internalType": "address",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "protocolFeeBP",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "protocolFeeBP",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "callerFeeBP",
+					"type": "uint256"
+				}
+			],
+			"name": "setFees",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}
+	]
+}

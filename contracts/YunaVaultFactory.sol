@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "./YunaVault.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract YunaVaultFactory {
     event VaultCreated(address indexed token, address vault);
@@ -9,6 +10,8 @@ contract YunaVaultFactory {
 
     address public protocol; 
     address[] public allVaults;
+    uint256 public protocolFeeBP = 50;
+    uint256 public callerFeeBP = 25; 
     mapping(address => address) public vaultForToken;
     
     constructor(address _protocol) {
@@ -18,6 +21,13 @@ contract YunaVaultFactory {
 
     struct TimeMultiplierIn { uint256 minBlocks; uint256 multiplierBP; }
     struct AmountMultiplierIn { uint256 minAmount; uint256 multiplierBP; }
+
+    function setFees(uint256 _protocolFeeBP, uint256 _callerFeeBP) external {
+    require(msg.sender == protocol, "only protocol");
+    require(_protocolFeeBP + _callerFeeBP < 10000, "fees too high");
+        protocolFeeBP = _protocolFeeBP;
+        callerFeeBP = _callerFeeBP;
+    }
 
     function createVault(
         address token,
@@ -66,6 +76,7 @@ contract YunaVaultFactory {
         YunaVault vault = new YunaVault(
             protocol,
             token,
+            address(this),
             minDeposit,
             maxDeposit,
             xpRate,
@@ -82,7 +93,9 @@ contract YunaVaultFactory {
     }
 
    function closeVault(address vaultAddr) external {
-        require(msg.sender == protocol, "only protocol");
+        require(msg.sender == protocol, string(
+        abi.encodePacked("only protocol: ", Strings.toHexString(uint160(msg.sender), 20))
+    ));
         require(vaultAddr != address(0), "vault 0");
 
         IVault(vaultAddr).token();

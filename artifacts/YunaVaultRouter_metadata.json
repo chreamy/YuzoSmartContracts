@@ -9,6 +9,22 @@
 				"inputs": [
 					{
 						"internalType": "address",
+						"name": "_factory",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_protocol",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
 						"name": "owner",
 						"type": "address"
 					}
@@ -47,6 +63,92 @@
 				"type": "event"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "vaultAddr",
+						"type": "address"
+					}
+				],
+				"name": "closeVault",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "minDeposit",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "maxDeposit",
+						"type": "uint256"
+					},
+					{
+						"internalType": "int256",
+						"name": "xpRate",
+						"type": "int256"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "presetTimes",
+						"type": "uint256[]"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "minBlocks",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "multiplierBP",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct IVaultFactory.TimeMultiplierIn[]",
+						"name": "timeMultipliers",
+						"type": "tuple[]"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "minAmount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "multiplierBP",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct IVaultFactory.AmountMultiplierIn[]",
+						"name": "amountMultipliers",
+						"type": "tuple[]"
+					}
+				],
+				"name": "createVault",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "vaultAddr",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "disableRouter",
 				"outputs": [],
@@ -74,6 +176,167 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "getAllVaults",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getFactory",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getFees",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "protocolFeeBP",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "callerFeeBP",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getProtocol",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					}
+				],
+				"name": "getVaultByToken",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "vault",
+						"type": "address"
+					}
+				],
+				"name": "getVaultInfo",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "bool",
+								"name": "isActive",
+								"type": "bool"
+							},
+							{
+								"internalType": "address",
+								"name": "token",
+								"type": "address"
+							},
+							{
+								"internalType": "int256",
+								"name": "xpRate",
+								"type": "int256"
+							},
+							{
+								"internalType": "uint256[]",
+								"name": "presetTimes",
+								"type": "uint256[]"
+							},
+							{
+								"components": [
+									{
+										"internalType": "uint256",
+										"name": "minBlocks",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "multiplierBP",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct IVaultFactory.TimeMultiplierIn[]",
+								"name": "timeMultipliers",
+								"type": "tuple[]"
+							},
+							{
+								"components": [
+									{
+										"internalType": "uint256",
+										"name": "minAmount",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "multiplierBP",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct IVaultFactory.AmountMultiplierIn[]",
+								"name": "amountMultipliers",
+								"type": "tuple[]"
+							},
+							{
+								"internalType": "uint256",
+								"name": "minDeposit",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "maxDeposit",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct YunaVaultRouter.VaultInfo",
+						"name": "info",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -86,7 +349,7 @@
 						"type": "address"
 					}
 				],
-				"name": "getXPFromVault",
+				"name": "getXP",
 				"outputs": [
 					{
 						"internalType": "uint256",
@@ -131,7 +394,7 @@
 						"type": "address"
 					}
 				],
-				"name": "releaseAllFromVault",
+				"name": "release",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -144,7 +407,7 @@
 						"type": "address"
 					}
 				],
-				"name": "releaseFromVault",
+				"name": "releaseAll",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -172,6 +435,24 @@
 			{
 				"inputs": [
 					{
+						"internalType": "uint256",
+						"name": "protocolFeeBP",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "callerFeeBP",
+						"type": "uint256"
+					}
+				],
+				"name": "setFees",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "address",
 						"name": "vault",
 						"type": "address"
@@ -187,7 +468,7 @@
 						"type": "uint256"
 					}
 				],
-				"name": "stakeToVault",
+				"name": "stake",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -264,54 +545,6 @@
 				"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a"
 			]
 		},
-		"@openzeppelin/contracts/interfaces/IERC1363.sol": {
-			"keccak256": "0xd5ea07362ab630a6a3dee4285a74cf2377044ca2e4be472755ad64d7c5d4b69d",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://da5e832b40fc5c3145d3781e2e5fa60ac2052c9d08af7e300dc8ab80c4343100",
-				"dweb:/ipfs/QmTzf7N5ZUdh5raqtzbM11yexiUoLC9z3Ws632MCuycq1d"
-			]
-		},
-		"@openzeppelin/contracts/interfaces/IERC165.sol": {
-			"keccak256": "0x0afcb7e740d1537b252cb2676f600465ce6938398569f09ba1b9ca240dde2dfc",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://1c299900ac4ec268d4570ecef0d697a3013cd11a6eb74e295ee3fbc945056037",
-				"dweb:/ipfs/Qmab9owJoxcA7vJT5XNayCMaUR1qxqj1NDzzisduwaJMcZ"
-			]
-		},
-		"@openzeppelin/contracts/interfaces/IERC20.sol": {
-			"keccak256": "0x1a6221315ce0307746c2c4827c125d821ee796c74a676787762f4778671d4f44",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://1bb2332a7ee26dd0b0de9b7fe266749f54820c99ab6a3bcb6f7e6b751d47ee2d",
-				"dweb:/ipfs/QmcRWpaBeCYkhy68PR3B4AgD7asuQk7PwkWxrvJbZcikLF"
-			]
-		},
-		"@openzeppelin/contracts/security/ReentrancyGuard.sol": {
-			"keccak256": "0xa535a5df777d44e945dd24aa43a11e44b024140fc340ad0dfe42acf4002aade1",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://41319e7f621f2dc3733511332c4fd032f8e32ad2aa7fd6f665c19741d9941a34",
-				"dweb:/ipfs/QmcYR3bd862GD1Bc7jwrU9bGxrhUu5na1oP964bDCu2id1"
-			]
-		},
-		"@openzeppelin/contracts/token/ERC20/IERC20.sol": {
-			"keccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://5282825a626cfe924e504274b864a652b0023591fa66f06a067b25b51ba9b303",
-				"dweb:/ipfs/QmeCfPykghhMc81VJTrHTC7sF6CRvaA1FXVq2pJhwYp1dV"
-			]
-		},
-		"@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol": {
-			"keccak256": "0x982c5cb790ab941d1e04f807120a71709d4c313ba0bfc16006447ffbd27fbbd5",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://8150ceb4ac947e8a442b2a9c017e01e880b2be2dd958f1fa9bc405f4c5a86508",
-				"dweb:/ipfs/QmbcBmFX66AY6Kbhnd5gx7zpkgqnUafo43XnmayAM7zVdB"
-			]
-		},
 		"@openzeppelin/contracts/utils/Context.sol": {
 			"keccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2",
 			"license": "MIT",
@@ -320,28 +553,12 @@
 				"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF"
 			]
 		},
-		"@openzeppelin/contracts/utils/introspection/IERC165.sol": {
-			"keccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://971f954442df5c2ef5b5ebf1eb245d7105d9fbacc7386ee5c796df1d45b21617",
-				"dweb:/ipfs/QmadRjHbkicwqwwh61raUEapaVEtaLMcYbQZWs9gUkgj3u"
-			]
-		},
-		"contracts/YunaVault.sol": {
-			"keccak256": "0xd21240c3478d51bb5e6665beda8301ec48674521d0eae1303ef0da1149b1a221",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://6ef150c66ad8412a01ccbfb6773afdc0618ee280857417a12b6700ca70213c8b",
-				"dweb:/ipfs/QmRa33T5CXvsvGo7aXA1om43X7oCCe1yoYixRTfq4UUMEg"
-			]
-		},
 		"contracts/YunaVaultRouter.sol": {
-			"keccak256": "0x51a6dc47ec00c16ef2f4f2b7b4a0f500f3ff5b16d2d10c9f8e4fdc168b53da81",
+			"keccak256": "0xe8caa5744e13e58eed5ddfc03841848dfedd3b50964c9a57c90e4af5be4cc740",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://4dad263bedc58f7ec86f5ebe55d3fe923eb1ec4690e7b548851f5e63acd85c1c",
-				"dweb:/ipfs/QmWFZL531jLBgBrepyFqsnPKdjWnvHwfmJGxfVAjVodrK6"
+				"bzz-raw://78ad9653b33d999ef92cf0ee77126e5303dab8ee3c1b210be0c36fe8c9bc484c",
+				"dweb:/ipfs/QmNiStmf4Wk4teXCBaoGQKQbMxGehhZyqb7fy9qdhFfXq7"
 			]
 		}
 	},
