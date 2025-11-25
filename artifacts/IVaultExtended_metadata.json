@@ -264,6 +264,22 @@
 				"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a"
 			]
 		},
+		"@openzeppelin/contracts/interfaces/IERC20.sol": {
+			"keccak256": "0x1a6221315ce0307746c2c4827c125d821ee796c74a676787762f4778671d4f44",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1bb2332a7ee26dd0b0de9b7fe266749f54820c99ab6a3bcb6f7e6b751d47ee2d",
+				"dweb:/ipfs/QmcRWpaBeCYkhy68PR3B4AgD7asuQk7PwkWxrvJbZcikLF"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+			"keccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://5282825a626cfe924e504274b864a652b0023591fa66f06a067b25b51ba9b303",
+				"dweb:/ipfs/QmeCfPykghhMc81VJTrHTC7sF6CRvaA1FXVq2pJhwYp1dV"
+			]
+		},
 		"@openzeppelin/contracts/utils/Context.sol": {
 			"keccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2",
 			"license": "MIT",
@@ -273,11 +289,11 @@
 			]
 		},
 		"contracts/YunaVaultRouter.sol": {
-			"keccak256": "0xe8caa5744e13e58eed5ddfc03841848dfedd3b50964c9a57c90e4af5be4cc740",
+			"keccak256": "0x4cff6a184c7b8a4a3fa7524d4f70317cf0518637877e4acc002d6ef555e682fc",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://78ad9653b33d999ef92cf0ee77126e5303dab8ee3c1b210be0c36fe8c9bc484c",
-				"dweb:/ipfs/QmNiStmf4Wk4teXCBaoGQKQbMxGehhZyqb7fy9qdhFfXq7"
+				"bzz-raw://7729a4eaa41174ae2c0ce867feaf9f32d2d8239c3435844717847bca1180d476",
+				"dweb:/ipfs/QmZyD33ZHguqgf7Je14RrZagqW9xWYRohsETCdmRxUgfw9"
 			]
 		}
 	},

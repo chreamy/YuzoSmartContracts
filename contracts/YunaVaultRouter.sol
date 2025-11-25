@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
 
 interface IVaultExtended {
     function isActive() external view returns (bool);
@@ -131,6 +132,9 @@ contract YunaVaultRouter is Ownable {
     // --- Vault User Operations ---
 
     function stake(address vault, uint256 amount, uint256 blocksToStake) external onlyWhenRouterEnabled {
+        IERC20 token = IERC20(IVaultExtended(vault).token());
+        require(token.transferFrom(msg.sender, address(this), amount), "transferFrom failed");
+        token.approve(vault, amount);
         IVaultExtended(vault).stake(amount, blocksToStake);
     }
 
