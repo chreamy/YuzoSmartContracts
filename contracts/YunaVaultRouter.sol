@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 interface IVaultExtended {
     function isActive() external view returns (bool);
@@ -17,9 +17,9 @@ interface IVaultExtended {
     function minDeposit() external view returns (uint256);
     function maxDeposit() external view returns (uint256);
 
-    function stake(uint256 amount, uint256 blocksToStake) external;
-    function release() external;
-    function releaseAll() external;
+    function stakeFor(uint256 amount, uint256 blocksToStake, address beneficiary) external;
+    function releaseFor(address user, address caller) external;
+    function releaseAll(address caller) external;
     function getXP(address holder) external view returns (uint256);
 }
 
@@ -50,6 +50,7 @@ interface IVaultFactory {
 }
 
 contract YunaVaultRouter is Ownable {
+    using SafeERC20 for IERC20;
     bool public isRouterEnabled = true;
     address public factory;
 
@@ -89,7 +90,7 @@ contract YunaVaultRouter is Ownable {
         uint256[] calldata presetTimes,
         IVaultFactory.TimeMultiplierIn[] calldata timeMultipliers,
         IVaultFactory.AmountMultiplierIn[] calldata amountMultipliers
-    ) external onlyWhenRouterEnabled returns (address vaultAddr) {
+    ) external onlyWhenRouterEnabled onlyOwner returns (address vaultAddr) {
         vaultAddr = IVaultFactory(factory).createVault(
             token,
             minDeposit,
@@ -101,7 +102,7 @@ contract YunaVaultRouter is Ownable {
         );
     }
 
-    function closeVault(address vaultAddr) external onlyWhenRouterEnabled {
+    function closeVault(address vaultAddr) external onlyWhenRouterEnabled onlyOwner {
         IVaultFactory(factory).closeVault(vaultAddr);
     }
 
@@ -131,22 +132,33 @@ contract YunaVaultRouter is Ownable {
 
     // --- Vault User Operations ---
 
-    function stake(address vault, uint256 amount, uint256 blocksToStake) external onlyWhenRouterEnabled {
-        IERC20 token = IERC20(IVaultExtended(vault).token());
-        require(token.transferFrom(msg.sender, address(this), amount), "transferFrom failed");
-        token.approve(vault, amount);
-        IVaultExtended(vault).stake(amount, blocksToStake);
+    function stake(address tokenAddr, uint256 amount, uint256 blocksToStake) external onlyWhenRouterEnabled 
+    {
+        IERC20 token = IERC20(tokenAddr);
+        token.safeTransferFrom(msg.sender, address(this), amount);
+        address vaultAddr = IVaultFactory(factory).getVaultByToken(tokenAddr);
+        require(vaultAddr != address(0), "vault not found");
+
+        IVaultExtended vault = IVaultExtended(vaultAddr);
+        token.approve(vaultAddr, amount);
+
+        // Stake for the original user
+        vault.stakeFor(amount, blocksToStake, msg.sender);
     }
 
-    function release(address vault) external onlyWhenRouterEnabled {
-        IVaultExtended(vault).release();
+
+    function releaseFor(address vault, address beneficiary) external onlyWhenRouterEnabled {
+        IVaultExtended(vault).releaseFor(beneficiary,msg.sender);
     }
 
     function releaseAll(address vault) external onlyWhenRouterEnabled {
-        IVaultExtended(vault).releaseAll();
+        IVaultExtended(vault).releaseAll(msg.sender);
     }
 
-    function getXP(address vault, address holder) external view returns (uint256) {
+    function getXP(address tokenAddr, address holder) external view returns (uint256) {
+        address vaultAddr = IVaultFactory(factory).getVaultByToken(tokenAddr);
+        require(vaultAddr != address(0), "vault not found");
+        IVaultExtended vault = IVaultExtended(vaultAddr);
         return IVaultExtended(vault).getXP(holder);
     }
 
@@ -163,41 +175,79 @@ contract YunaVaultRouter is Ownable {
     }
 
     function getVaultInfo(address vault) external view returns (VaultInfo memory info) {
-        IVaultExtended v = IVaultExtended(vault);
-        info.isActive = v.isActive();
-        info.token = v.token();
-        info.xpRate = v.xpRate();
+    // quick sanity: vault must be a contract
+    require(vault != address(0), "vault 0");
+    uint256 codeSize;
+    assembly { codeSize := extcodesize(vault) }
+    require(codeSize > 0, "not a contract");
 
-        // Preset times
-        uint256 len = v.presetTimesLen();
-        info.presetTimes = new uint256[](len);
-        for (uint256 i = 0; i < len; i++) {
-            info.presetTimes[i] = v.presetTimes(i);
+    IVaultExtended v = IVaultExtended(vault);
+
+    // Safe calls with try/catch to avoid bubbling reverts
+    // isActive, token, xpRate are cheap and unlikely to revert, but wrap anyway.
+    try v.isActive() returns (bool active_) { info.isActive = active_; } catch { info.isActive = false; }
+    try v.token() returns (address token_) { info.token = token_; } catch { info.token = address(0); }
+    try v.xpRate() returns (int256 xp_) { info.xpRate = xp_; } catch { info.xpRate = int256(0); }
+
+    // presetTimes
+    uint256 presetLen = 0;
+    try v.presetTimesLen() returns (uint256 l) {
+        presetLen = l;
+        info.presetTimes = new uint256[](presetLen);
+        for (uint256 i = 0; i < presetLen; i++) {
+            try v.presetTimes(i) returns (uint256 t) {
+                info.presetTimes[i] = t;
+            } catch {
+                info.presetTimes[i] = 0;
+            }
         }
-
-        // Time multipliers
-        uint256 lenTime = v.timeMultipliersLen();
-        info.timeMultipliers = new IVaultFactory.TimeMultiplierIn[](lenTime);
-        for (uint256 i = 0; i < lenTime; i++) {
-            (uint256 minBlocks, uint256 multiplierBP) = v.timeMultipliers(i);
-            info.timeMultipliers[i] = IVaultFactory.TimeMultiplierIn({
-                minBlocks: minBlocks,
-                multiplierBP: multiplierBP
-            });
-        }
-
-        // Amount multipliers
-        uint256 lenAmount = v.amountMultipliersLen();
-        info.amountMultipliers = new IVaultFactory.AmountMultiplierIn[](lenAmount);
-        for (uint256 i = 0; i < lenAmount; i++) {
-            (uint256 minAmount, uint256 multiplierBP) = v.amountMultipliers(i);
-            info.amountMultipliers[i] = IVaultFactory.AmountMultiplierIn({
-                minAmount: minAmount,
-                multiplierBP: multiplierBP
-            });
-        }
-
-        info.minDeposit = v.minDeposit();
-        info.maxDeposit = v.maxDeposit();
+    } catch {
+        info.presetTimes = new uint256[](0);
     }
+
+    // timeMultipliers
+    uint256 tLen = 0;
+    try v.timeMultipliersLen() returns (uint256 tl) {
+        tLen = tl;
+        info.timeMultipliers = new IVaultFactory.TimeMultiplierIn[](tLen);
+        for (uint256 i = 0; i < tLen; i++) {
+            try v.timeMultipliers(i) returns (uint256 minBlocks, uint256 multiplierBP) {
+                info.timeMultipliers[i] = IVaultFactory.TimeMultiplierIn({
+                    minBlocks: minBlocks,
+                    multiplierBP: multiplierBP
+                });
+            } catch {
+                info.timeMultipliers[i] = IVaultFactory.TimeMultiplierIn({minBlocks: 0, multiplierBP: 10000});
+            }
+        }
+    } catch {
+        info.timeMultipliers = new IVaultFactory.TimeMultiplierIn[](0);
+    }
+
+    // amountMultipliers
+    uint256 aLen = 0;
+    try v.amountMultipliersLen() returns (uint256 al) {
+        aLen = al;
+        info.amountMultipliers = new IVaultFactory.AmountMultiplierIn[](aLen);
+        for (uint256 i = 0; i < aLen; i++) {
+            try v.amountMultipliers(i) returns (uint256 minAmount, uint256 multiplierBP) {
+                info.amountMultipliers[i] = IVaultFactory.AmountMultiplierIn({
+                    minAmount: minAmount,
+                    multiplierBP: multiplierBP
+                });
+            } catch {
+                info.amountMultipliers[i] = IVaultFactory.AmountMultiplierIn({minAmount: 0, multiplierBP: 10000});
+            }
+        }
+    } catch {
+        info.amountMultipliers = new IVaultFactory.AmountMultiplierIn[](0);
+    }
+
+    // min/max deposit
+    try v.minDeposit() returns (uint256 md) { info.minDeposit = md; } catch { info.minDeposit = 0; }
+    try v.maxDeposit() returns (uint256 Md) { info.maxDeposit = Md; } catch { info.maxDeposit = 0; }
+
+    return info;
+}
+
 }

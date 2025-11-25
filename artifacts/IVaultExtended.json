@@ -45,9 +45,9 @@
 			"minDeposit()": "41b3d185",
 			"presetTimes(uint256)": "10390d35",
 			"presetTimesLen()": "359cfbf7",
-			"release()": "86d1a69f",
-			"releaseAll()": "5be7fde8",
-			"stake(uint256,uint256)": "7b0472f0",
+			"releaseAll(address)": "580fc80a",
+			"releaseFor(address,address)": "96d8ef8e",
+			"stakeFor(uint256,uint256,address)": "b1b0ebcc",
 			"timeMultipliers(uint256)": "5350cbd9",
 			"timeMultipliersLen()": "c122c2a1",
 			"token()": "fc0c546a",
@@ -183,15 +183,32 @@
 			"type": "function"
 		},
 		{
-			"inputs": [],
-			"name": "release",
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "caller",
+					"type": "address"
+				}
+			],
+			"name": "releaseAll",
 			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		},
 		{
-			"inputs": [],
-			"name": "releaseAll",
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "user",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "caller",
+					"type": "address"
+				}
+			],
+			"name": "releaseFor",
 			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
@@ -207,9 +224,14 @@
 					"internalType": "uint256",
 					"name": "blocksToStake",
 					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "beneficiary",
+					"type": "address"
 				}
 			],
-			"name": "stake",
+			"name": "stakeFor",
 			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"

@@ -71,15 +71,37 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "release",
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "caller",
+						"type": "address"
+					}
+				],
+				"name": "releaseAll",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "releaseAll",
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "takeFee",
+						"type": "bool"
+					},
+					{
+						"internalType": "address",
+						"name": "caller",
+						"type": "address"
+					}
+				],
+				"name": "releaseFor",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -95,9 +117,14 @@
 						"internalType": "uint256",
 						"name": "blocksToStake",
 						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "beneficiary",
+						"type": "address"
 					}
 				],
-				"name": "stake",
+				"name": "stakeFor",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -254,19 +281,19 @@
 			]
 		},
 		"contracts/YunaVault.sol": {
-			"keccak256": "0xd5cb2e78c05d8c8256c32794b0f998b3455fc1b0c1a08a3d603f026b35df36ea",
+			"keccak256": "0x31d8a5d99498e94bad7a12d4f004d9097dfdb1c35439f3fa694821a3e04b3a7d",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://b7307319ac5f37ede30ff2d8308783e6ca760f5b1e30f64fa5a39ed8eadfa0d4",
-				"dweb:/ipfs/QmUakmEq67vr7HdcjdSAYywW47PA7KpevVnnFzwepRpPst"
+				"bzz-raw://99de4608b322197e23badc9e7bb0d699242200c77e023f1b1ed37a3d84eb66e9",
+				"dweb:/ipfs/QmXUrcJpuKknhX9j8TboswwYMtwumJ6ZErQrgkE1kQyqY6"
 			]
 		},
 		"contracts/YunaVaultFactory.sol": {
-			"keccak256": "0x763b92b32fabf3443958624b3a0d173be8daaf24b2ce3f139278dc3bd661ec1d",
+			"keccak256": "0x7f65b97a04723a1db2ae90acc59620c78f2007ea1cf709aa1a6fe2e83b793147",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://994124a53471fa29608375d68c7e9a20398f1712308ccd137191a2c5040cb46c",
-				"dweb:/ipfs/QmbPkAfxELizAJftxsAFVBhLDA7uL6vBe3vNsgrywsJf5d"
+				"bzz-raw://e12ea2ab91a102a2e64c6ec3660f95374ae180aa38426df45eb2f8a62796d20a",
+				"dweb:/ipfs/QmX6DC2Pt8rgRNK7kqLw26XxGbyq8KyXoqE5c1oiiZw2pX"
 			]
 		}
 	},

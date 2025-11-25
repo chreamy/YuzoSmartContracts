@@ -6,9 +6,9 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./YunaVaultFactory.sol";
 
 interface IVault {
-    function stake(uint256 amount, uint256 blocksToStake) external;
-    function release() external;
-    function releaseAll() external;
+    function stakeFor(uint256 amount, uint256 blocksToStake, address beneficiary) external;
+    function releaseFor(address user, bool takeFee, address caller) external;
+    function releaseAll(address caller) external;
     function getXP(address holder) external view returns (uint256 xp);
     function token() external view returns (address);
     function isActive() external view returns (bool);
@@ -69,8 +69,16 @@ contract YunaVault is ReentrancyGuard {
     event EmergencyReleased(address indexed user, uint256 indexed posId, uint256 refund);
     event VaultClosed();
 
+    function _getRouter() internal view returns (address) {
+        return YunaVaultFactory(factory).approvedRouter();
+    }
+
+    function getApprovedRouter() external view returns (address) {
+        return _getRouter();
+    }
+
     modifier onlyProtocol() {
-        require(msg.sender == protocol, "only protocol");
+        require(msg.sender == protocol || msg.sender == _getRouter() || msg.sender == factory, "only protocol");
         _;
     }
 
@@ -115,7 +123,7 @@ contract YunaVault is ReentrancyGuard {
         return false;
     }
 
-    function stake(uint256 amount, uint256 blocksToStake) external nonReentrant {
+    function stakeFor(uint256 amount, uint256 blocksToStake, address beneficiary) external nonReentrant onlyProtocol {
         require(active && !closed, "vault not active");
         require(amount >= minDeposit && amount <= maxDeposit, "amount out of bounds");
         require(blocksToStake > 0, "blocks>0");
@@ -124,7 +132,7 @@ contract YunaVault is ReentrancyGuard {
         IERC20(vaultToken).safeTransferFrom(msg.sender, address(this), amount);
 
         positions.push(Position({
-            user: msg.sender,
+            user: beneficiary,
             amount: amount,
             startBlock: block.number,
             endBlock: block.number + blocksToStake,
@@ -132,23 +140,19 @@ contract YunaVault is ReentrancyGuard {
         }));
 
         uint256 posId = positions.length - 1;
-        activePositions[msg.sender].push(posId);
+        activePositions[beneficiary].push(posId);
 
-        if (!_seenParticipant[msg.sender]) {
-            _seenParticipant[msg.sender] = true;
-            _participants.push(msg.sender);
+        if (!_seenParticipant[beneficiary]) {
+            _seenParticipant[beneficiary] = true;
+            _participants.push(beneficiary);
         }
 
-        emit Staked(msg.sender, posId, amount, block.number, block.number + blocksToStake);
+        emit Staked(beneficiary, posId, amount, block.number, block.number + blocksToStake);
     }
 
-    // release all matured positions for caller (normal flow) - fee applies
-    function release() external nonReentrant {
-        _releaseFor(msg.sender, true);
-    }
 
     // release all matured positions, caller gets settlement fee (0.25%), protocol gets feeBP (0.5%)
-    function releaseAll() external nonReentrant {
+    function releaseAll(address caller) external nonReentrant onlyProtocol {
         (uint256 feeBP, uint256 callerFeeBP) = getFees();
         uint256 totalBP = feeBP + callerFeeBP;
         
@@ -165,7 +169,7 @@ contract YunaVault is ReentrancyGuard {
                 uint256 callerFee = fee - protocolFee;
 
                 if (protocolFee > 0) IERC20(vaultToken).safeTransfer(protocol, protocolFee);
-                if (callerFee > 0) IERC20(vaultToken).safeTransfer(msg.sender, callerFee);
+                if (callerFee > 0) IERC20(vaultToken).safeTransfer(caller, callerFee);
                 IERC20(vaultToken).safeTransfer(pos.user, refund);
 
                 emit Released(pos.user, posId, refund, fee);
@@ -187,48 +191,69 @@ contract YunaVault is ReentrancyGuard {
     }
 
 
-    function _releaseFor(address user, bool takeFee) internal {
-        (uint256 feeBP,) = getFees();
+    function releaseFor(address user, address caller) external nonReentrant onlyProtocol {
+        (uint256 feeBP, uint256 callerFeeBP) = getFees();
         uint256[] storage ids = activePositions[user];
         uint256 i = 0;
+
         while (i < ids.length) {
             uint256 posId = ids[i];
             Position storage p = positions[posId];
 
-            // matured OR (emergency case where closed==true && we allow immediate refund)
             bool matured = block.number >= p.endBlock;
-            if (!p.claimed && (matured || (closed && !takeFee))) {
+
+            if (!p.claimed && (matured || closed)) {
                 p.claimed = true;
 
                 uint256 refund;
                 uint256 fee;
 
-                if (takeFee && matured) {
-                    refund = (p.amount * (10000 - feeBP)) / 10000;
-                    fee = p.amount - refund;
-                    if (fee > 0) {
-                        IERC20(vaultToken).safeTransfer(protocol, fee);
+                if (matured) {
+                    uint256 totalFeeBP;
+
+                    if (caller == user) {
+                        totalFeeBP = feeBP; // protocol only
+                    } else {
+                        totalFeeBP = feeBP + callerFeeBP; // protocol + caller
                     }
+
+                    fee = (p.amount * totalFeeBP) / 10000;
+                    refund = p.amount - fee;
+
+                    // protocol fee portion
+                    uint256 protocolFee = (p.amount * feeBP) / 10000;
+
+                    // caller fee portion (only when caller != user)
+                    uint256 callerFee = 0;
+                    if (caller != user) {
+                        callerFee = fee - protocolFee;
+                    }
+
+                    if (protocolFee > 0) IERC20(vaultToken).safeTransfer(protocol, protocolFee);
+                    if (callerFee > 0) IERC20(vaultToken).safeTransfer(caller, callerFee);
                     IERC20(vaultToken).safeTransfer(p.user, refund);
+
                     emit Released(p.user, posId, refund, fee);
+
                 } else {
-                    // emergency refund full principal
-                    refund = p.amount;
-                    IERC20(vaultToken).safeTransfer(p.user, refund);
-                    emit EmergencyReleased(p.user, posId, refund);
-                }
+                        refund = p.amount;
+                        IERC20(vaultToken).safeTransfer(p.user, refund);
+                        emit EmergencyReleased(p.user, posId, refund);
+                    }
 
-                // move to history
-                historyPositions[user].push(posId);
+                    // move to history
+                    historyPositions[user].push(posId);
 
-                // remove from activePositions array (swap & pop)
-                ids[i] = ids[ids.length - 1];
-                ids.pop();
+                    // remove from activePositions array (swap & pop)
+                    ids[i] = ids[ids.length - 1];
+                    ids.pop();
+
             } else {
                 i++;
             }
         }
     }
+
 
     function getFees() public view returns (uint256 _protocolFeeBP, uint256 _callerFeeBP) {
         YunaVaultFactory f = YunaVaultFactory(factory);
@@ -255,7 +280,6 @@ contract YunaVault is ReentrancyGuard {
         }
     }
 
-    // compute base xp then apply multipliers (BP)
     function _calcPositionXP(uint256 amount, uint256 blocks, uint256 period) internal view returns (uint256) {
         uint256 base;
 
@@ -301,8 +325,7 @@ contract YunaVault is ReentrancyGuard {
         return active && !closed;
     }
 
-    function closeVault() external {
-        require(msg.sender == protocol || msg.sender == factory, "only protocol");
+    function closeVault() external onlyProtocol {
         active = false;
         closed = true;
         emit VaultClosed();

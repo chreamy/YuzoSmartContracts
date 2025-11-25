@@ -44,6 +44,17 @@
 				"type": "error"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					}
+				],
+				"name": "SafeERC20FailedOperation",
+				"type": "error"
+			},
+			{
 				"anonymous": false,
 				"inputs": [
 					{
@@ -340,7 +351,7 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "vault",
+						"name": "tokenAddr",
 						"type": "address"
 					},
 					{
@@ -394,7 +405,7 @@
 						"type": "address"
 					}
 				],
-				"name": "release",
+				"name": "releaseAll",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -405,9 +416,14 @@
 						"internalType": "address",
 						"name": "vault",
 						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "beneficiary",
+						"type": "address"
 					}
 				],
-				"name": "releaseAll",
+				"name": "releaseFor",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -454,7 +470,7 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "vault",
+						"name": "tokenAddr",
 						"type": "address"
 					},
 					{
@@ -497,6 +513,11 @@
 				"OwnableUnauthorizedAccount(address)": [
 					{
 						"details": "The caller account is not authorized to perform an operation."
+					}
+				],
+				"SafeERC20FailedOperation(address)": [
+					{
+						"details": "An operation with an ERC-20 token failed."
 					}
 				]
 			},
@@ -545,6 +566,22 @@
 				"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a"
 			]
 		},
+		"@openzeppelin/contracts/interfaces/IERC1363.sol": {
+			"keccak256": "0xd5ea07362ab630a6a3dee4285a74cf2377044ca2e4be472755ad64d7c5d4b69d",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://da5e832b40fc5c3145d3781e2e5fa60ac2052c9d08af7e300dc8ab80c4343100",
+				"dweb:/ipfs/QmTzf7N5ZUdh5raqtzbM11yexiUoLC9z3Ws632MCuycq1d"
+			]
+		},
+		"@openzeppelin/contracts/interfaces/IERC165.sol": {
+			"keccak256": "0x0afcb7e740d1537b252cb2676f600465ce6938398569f09ba1b9ca240dde2dfc",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1c299900ac4ec268d4570ecef0d697a3013cd11a6eb74e295ee3fbc945056037",
+				"dweb:/ipfs/Qmab9owJoxcA7vJT5XNayCMaUR1qxqj1NDzzisduwaJMcZ"
+			]
+		},
 		"@openzeppelin/contracts/interfaces/IERC20.sol": {
 			"keccak256": "0x1a6221315ce0307746c2c4827c125d821ee796c74a676787762f4778671d4f44",
 			"license": "MIT",
@@ -561,6 +598,14 @@
 				"dweb:/ipfs/QmeCfPykghhMc81VJTrHTC7sF6CRvaA1FXVq2pJhwYp1dV"
 			]
 		},
+		"@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol": {
+			"keccak256": "0x982c5cb790ab941d1e04f807120a71709d4c313ba0bfc16006447ffbd27fbbd5",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8150ceb4ac947e8a442b2a9c017e01e880b2be2dd958f1fa9bc405f4c5a86508",
+				"dweb:/ipfs/QmbcBmFX66AY6Kbhnd5gx7zpkgqnUafo43XnmayAM7zVdB"
+			]
+		},
 		"@openzeppelin/contracts/utils/Context.sol": {
 			"keccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2",
 			"license": "MIT",
@@ -569,12 +614,20 @@
 				"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF"
 			]
 		},
-		"contracts/YunaVaultRouter.sol": {
-			"keccak256": "0x4cff6a184c7b8a4a3fa7524d4f70317cf0518637877e4acc002d6ef555e682fc",
+		"@openzeppelin/contracts/utils/introspection/IERC165.sol": {
+			"keccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://7729a4eaa41174ae2c0ce867feaf9f32d2d8239c3435844717847bca1180d476",
-				"dweb:/ipfs/QmZyD33ZHguqgf7Je14RrZagqW9xWYRohsETCdmRxUgfw9"
+				"bzz-raw://971f954442df5c2ef5b5ebf1eb245d7105d9fbacc7386ee5c796df1d45b21617",
+				"dweb:/ipfs/QmadRjHbkicwqwwh61raUEapaVEtaLMcYbQZWs9gUkgj3u"
+			]
+		},
+		"contracts/YunaVaultRouter.sol": {
+			"keccak256": "0xcaf129b177704ed4c176f6a5a1b42c6509703320de433c1987c60dd158468fd0",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://2830fe9b2dea765a53b5e3a7017833e96fa0f10fa0cb7cac1b974c7246a19b20",
+				"dweb:/ipfs/QmS6HSERh2AHGiMsx2Qi9f61xSH1c63wKQW6SZRsCPDJb7"
 			]
 		}
 	},

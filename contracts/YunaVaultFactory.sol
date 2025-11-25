@@ -9,24 +9,35 @@ contract YunaVaultFactory {
     event VaultClosedByFactory(address indexed vault);
 
     address public protocol; 
+    address public approvedRouter;
     address[] public allVaults;
     uint256 public protocolFeeBP = 50;
     uint256 public callerFeeBP = 25; 
-    mapping(address => address) public vaultForToken;
+    mapping(address => address) vaultForToken;
     
     constructor(address _protocol) {
-        require(_protocol != address(0), "protocol 0");
+        require(_protocol != address(0), "invalid protocol address");
         protocol = _protocol;
     }
+
+    modifier onlyProtocol() {
+        require(msg.sender == protocol || msg.sender == approvedRouter, "factory: only protocol");
+        _;
+    }
+    
 
     struct TimeMultiplierIn { uint256 minBlocks; uint256 multiplierBP; }
     struct AmountMultiplierIn { uint256 minAmount; uint256 multiplierBP; }
 
-    function setFees(uint256 _protocolFeeBP, uint256 _callerFeeBP) external {
-    require(msg.sender == protocol, "only protocol");
+    function setFees(uint256 _protocolFeeBP, uint256 _callerFeeBP) external onlyProtocol {
     require(_protocolFeeBP + _callerFeeBP < 10000, "fees too high");
         protocolFeeBP = _protocolFeeBP;
         callerFeeBP = _callerFeeBP;
+    }
+
+    function setApprovedRouter(address _router) external {
+        require(msg.sender == protocol, "only protocol");
+        approvedRouter = _router;
     }
 
     function createVault(
@@ -37,7 +48,7 @@ contract YunaVaultFactory {
         uint256[] calldata presetTimes,
         TimeMultiplierIn[] calldata timeMultipliers,
         AmountMultiplierIn[] calldata amountMultipliers
-    ) external returns (address vaultAddr) {
+    ) external onlyProtocol returns (address vaultAddr) {
         require(token != address(0), "token 0");
         require(vaultForToken[token] == address(0), "active vault exists");
         
@@ -92,10 +103,8 @@ contract YunaVaultFactory {
         emit VaultCreated(token, vaultAddr);
     }
 
-   function closeVault(address vaultAddr) external {
-        require(msg.sender == protocol, string(
-        abi.encodePacked("only protocol: ", Strings.toHexString(uint160(msg.sender), 20))
-    ));
+   function closeVault(address vaultAddr) external onlyProtocol {
+    
         require(vaultAddr != address(0), "vault 0");
 
         IVault(vaultAddr).token();

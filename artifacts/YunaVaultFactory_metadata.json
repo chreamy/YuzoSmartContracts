@@ -17,22 +17,6 @@
 				"type": "constructor"
 			},
 			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "value",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "length",
-						"type": "uint256"
-					}
-				],
-				"name": "StringsInsufficientHexLength",
-				"type": "error"
-			},
-			{
 				"anonymous": false,
 				"inputs": [
 					{
@@ -73,6 +57,19 @@
 					}
 				],
 				"name": "allVaults",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "approvedRouter",
 				"outputs": [
 					{
 						"internalType": "address",
@@ -267,6 +264,19 @@
 			{
 				"inputs": [
 					{
+						"internalType": "address",
+						"name": "_router",
+						"type": "address"
+					}
+				],
+				"name": "setApprovedRouter",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "uint256",
 						"name": "_protocolFeeBP",
 						"type": "uint256"
@@ -281,35 +291,9 @@
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"name": "vaultForToken",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
 			}
 		],
 		"devdoc": {
-			"errors": {
-				"StringsInsufficientHexLength(uint256,uint256)": [
-					{
-						"details": "The `value` string doesn't fit in the specified `length`."
-					}
-				]
-			},
 			"kind": "dev",
 			"methods": {},
 			"version": 1
@@ -434,19 +418,19 @@
 			]
 		},
 		"contracts/YunaVault.sol": {
-			"keccak256": "0xd5cb2e78c05d8c8256c32794b0f998b3455fc1b0c1a08a3d603f026b35df36ea",
+			"keccak256": "0xc9a26255534971d2e461254618cb9a4efd3aacc3bb9309a0e9f2197f72d06042",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://b7307319ac5f37ede30ff2d8308783e6ca760f5b1e30f64fa5a39ed8eadfa0d4",
-				"dweb:/ipfs/QmUakmEq67vr7HdcjdSAYywW47PA7KpevVnnFzwepRpPst"
+				"bzz-raw://966602b40b6ece8b2fc60d356526aec8521bc32ed54839917ab0717bcb178ac4",
+				"dweb:/ipfs/QmctcHMQKKUGChTjq4WmsizGXf417cjUbS8rL5ZhaBSr7K"
 			]
 		},
 		"contracts/YunaVaultFactory.sol": {
-			"keccak256": "0x763b92b32fabf3443958624b3a0d173be8daaf24b2ce3f139278dc3bd661ec1d",
+			"keccak256": "0x7f65b97a04723a1db2ae90acc59620c78f2007ea1cf709aa1a6fe2e83b793147",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://994124a53471fa29608375d68c7e9a20398f1712308ccd137191a2c5040cb46c",
-				"dweb:/ipfs/QmbPkAfxELizAJftxsAFVBhLDA7uL6vBe3vNsgrywsJf5d"
+				"bzz-raw://e12ea2ab91a102a2e64c6ec3660f95374ae180aa38426df45eb2f8a62796d20a",
+				"dweb:/ipfs/QmX6DC2Pt8rgRNK7kqLw26XxGbyq8KyXoqE5c1oiiZw2pX"
 			]
 		}
 	},
