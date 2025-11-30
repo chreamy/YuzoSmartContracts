@@ -5,19 +5,6 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./YunaVaultFactory.sol";
 
-interface IVault {
-    function stakeFor(uint256 amount, uint256 blocksToStake, address beneficiary) external;
-    function releaseFor(address user, bool takeFee, address caller) external;
-    function releaseAll(address caller) external;
-    function getXP(address holder) external view returns (uint256 xp);
-    function token() external view returns (address);
-    function isActive() external view returns (bool);
-    function closeVault() external;
-    function positionsLength() external view returns (uint256);
-    function timeMultipliersLen() external view returns (uint256);
-    function amountMultipliersLen() external view returns (uint256);
-}
-
 contract YunaVault is ReentrancyGuard {
     using SafeERC20 for IERC20;
 
@@ -316,6 +303,21 @@ contract YunaVault is ReentrancyGuard {
         return finalXP;
     }
 
+    function getPositionsByAddress(address user) external view returns (Position[] memory) {
+        uint256[] memory act = activePositions[user];
+        uint256[] memory hist = historyPositions[user];
+        Position[] memory result = new Position[](act.length + hist.length);
+
+        for (uint256 i = 0; i < act.length; i++) {
+            result[i] = positions[act[i]];
+        }
+
+        for (uint256 j = 0; j < hist.length; j++) {
+            result[act.length + j] = positions[hist[j]];
+        }
+
+        return result;
+    }
 
     function token() external view returns (address) {
         return vaultToken;
@@ -348,22 +350,5 @@ contract YunaVault is ReentrancyGuard {
 
     function positionsLength() external view returns (uint256) {
         return positions.length;
-    }
-
-    function getPositionsPaginated(address user, uint256 offset, uint256 limit, bool _active)
-        external view returns (uint256[] memory page)
-    {
-        uint256[] storage source = _active ? activePositions[user] : historyPositions[user];
-        uint256 length = source.length;
-
-        if (offset >= length) return page;
-
-        uint256 end = offset + limit;
-        if (end > length) end = length;
-
-        page = new uint256[](end - offset);
-        for (uint256 i = offset; i < end; i++) {
-            page[i - offset] = source[i];
-        }
     }
 }

@@ -4,7 +4,16 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+
 interface IVaultExtended {
+    struct Position {
+        address user;
+        uint256 amount;
+        uint256 startBlock;
+        uint256 endBlock;
+        bool claimed;
+    }
+    function getPositionsByAddress(address user) external view returns (Position[] memory);
     function isActive() external view returns (bool);
     function token() external view returns (address);
     function xpRate() external view returns (int256);
@@ -16,7 +25,8 @@ interface IVaultExtended {
     function amountMultipliers(uint256 index) external view returns (uint256 minAmount, uint256 multiplierBP);
     function minDeposit() external view returns (uint256);
     function maxDeposit() external view returns (uint256);
-
+    function getPositionsPaginated(address user, uint256 offset, uint256 limit, bool _active)
+        external view returns (uint256[] memory page);
     function stakeFor(uint256 amount, uint256 blocksToStake, address beneficiary) external;
     function releaseFor(address user, address caller) external;
     function releaseAll(address caller) external;
@@ -80,8 +90,6 @@ contract YunaVaultRouter is Ownable {
         isRouterEnabled = true;
     }
 
-    // --- Factory/Admin Operations ---
-
     function createVault(
         address token,
         uint256 minDeposit,
@@ -130,8 +138,6 @@ contract YunaVaultRouter is Ownable {
         return factory;
     }
 
-    // --- Vault User Operations ---
-
     function stake(address tokenAddr, uint256 amount, uint256 blocksToStake) external onlyWhenRouterEnabled 
     {
         IERC20 token = IERC20(tokenAddr);
@@ -141,8 +147,6 @@ contract YunaVaultRouter is Ownable {
 
         IVaultExtended vault = IVaultExtended(vaultAddr);
         token.approve(vaultAddr, amount);
-
-        // Stake for the original user
         vault.stakeFor(amount, blocksToStake, msg.sender);
     }
 
@@ -162,7 +166,61 @@ contract YunaVaultRouter is Ownable {
         return IVaultExtended(vault).getXP(holder);
     }
 
-    // --- Vault Info ---
+    struct TokenXP {
+        address token;
+        uint256 xp;
+    }
+
+    struct TokenPositions {
+        address token;
+        IVaultExtended.Position[] positions;
+    }
+
+    function getAllXP(address user)
+        external
+        view
+        returns (TokenXP[] memory results)
+    {
+        address[] memory addresses = IVaultFactory(factory).getAllVaults();
+        results = new TokenXP[](addresses.length);
+
+        for (uint256 i; i < addresses.length; i++) {
+            address token = IVaultExtended(addresses[i]).token();
+            address vault = IVaultFactory(factory).getVaultByToken(token);
+
+            uint256 xp = 0;
+            if (vault != address(0)) {
+                xp = IVaultExtended(vault).getXP(user);
+            }
+
+            results[i] = TokenXP({
+                token: token,
+                xp: xp
+            });
+        }
+    }
+
+    function getAllPositions(address user)
+        external
+        view
+        returns (TokenPositions[] memory results)
+    {
+        address[] memory addresses = IVaultFactory(factory).getAllVaults();
+        results = new TokenPositions[](addresses.length);
+
+        for (uint256 i; i < addresses.length; i++) {
+            IVaultExtended vault = IVaultExtended(addresses[i]);
+
+            IVaultExtended.Position[] memory positions;
+            positions = IVaultExtended(vault).getPositionsByAddress(user);
+            
+
+            results[i] = TokenPositions({
+                token: IVaultExtended(vault).token(),
+                positions: positions
+            });
+        }
+    }
     struct VaultInfo {
         bool isActive;
         address token;
@@ -174,25 +232,22 @@ contract YunaVaultRouter is Ownable {
         uint256 maxDeposit;
     }
 
-    function getVaultInfo(address vault) external view returns (VaultInfo memory info) {
-    // quick sanity: vault must be a contract
+    function getVaultInfo(address vault) 
+    public 
+    view 
+    returns (VaultInfo memory info) 
+{
     require(vault != address(0), "vault 0");
     uint256 codeSize;
     assembly { codeSize := extcodesize(vault) }
     require(codeSize > 0, "not a contract");
 
     IVaultExtended v = IVaultExtended(vault);
-
-    // Safe calls with try/catch to avoid bubbling reverts
-    // isActive, token, xpRate are cheap and unlikely to revert, but wrap anyway.
     try v.isActive() returns (bool active_) { info.isActive = active_; } catch { info.isActive = false; }
     try v.token() returns (address token_) { info.token = token_; } catch { info.token = address(0); }
     try v.xpRate() returns (int256 xp_) { info.xpRate = xp_; } catch { info.xpRate = int256(0); }
 
-    // presetTimes
-    uint256 presetLen = 0;
-    try v.presetTimesLen() returns (uint256 l) {
-        presetLen = l;
+    try v.presetTimesLen() returns (uint256 presetLen) {
         info.presetTimes = new uint256[](presetLen);
         for (uint256 i = 0; i < presetLen; i++) {
             try v.presetTimes(i) returns (uint256 t) {
@@ -205,10 +260,7 @@ contract YunaVaultRouter is Ownable {
         info.presetTimes = new uint256[](0);
     }
 
-    // timeMultipliers
-    uint256 tLen = 0;
-    try v.timeMultipliersLen() returns (uint256 tl) {
-        tLen = tl;
+    try v.timeMultipliersLen() returns (uint256 tLen) {
         info.timeMultipliers = new IVaultFactory.TimeMultiplierIn[](tLen);
         for (uint256 i = 0; i < tLen; i++) {
             try v.timeMultipliers(i) returns (uint256 minBlocks, uint256 multiplierBP) {
@@ -221,13 +273,10 @@ contract YunaVaultRouter is Ownable {
             }
         }
     } catch {
-        info.timeMultipliers = new IVaultFactory.TimeMultiplierIn[](0);
+        info.timeMultipliers = new IVaultFactory.TimeMultiplierIn[](0) ;
     }
 
-    // amountMultipliers
-    uint256 aLen = 0;
-    try v.amountMultipliersLen() returns (uint256 al) {
-        aLen = al;
+    try v.amountMultipliersLen() returns (uint256 aLen) {
         info.amountMultipliers = new IVaultFactory.AmountMultiplierIn[](aLen);
         for (uint256 i = 0; i < aLen; i++) {
             try v.amountMultipliers(i) returns (uint256 minAmount, uint256 multiplierBP) {
@@ -240,14 +289,24 @@ contract YunaVaultRouter is Ownable {
             }
         }
     } catch {
-        info.amountMultipliers = new IVaultFactory.AmountMultiplierIn[](0);
+        info.amountMultipliers = new IVaultFactory.AmountMultiplierIn[](0) ;
     }
 
-    // min/max deposit
     try v.minDeposit() returns (uint256 md) { info.minDeposit = md; } catch { info.minDeposit = 0; }
     try v.maxDeposit() returns (uint256 Md) { info.maxDeposit = Md; } catch { info.maxDeposit = 0; }
 
     return info;
 }
+
+
+    function getAllVaultInfo() external view returns (VaultInfo[] memory results) {
+        address[] memory vaults = IVaultFactory(factory).getAllVaults();
+        results = new VaultInfo[](vaults.length);
+
+        for (uint256 i; i < vaults.length; i++) {
+            results[i] = this.getVaultInfo(vaults[i]);
+        }
+    }
+
 
 }

@@ -281,11 +281,11 @@
 			]
 		},
 		"contracts/YunaVault.sol": {
-			"keccak256": "0x31d8a5d99498e94bad7a12d4f004d9097dfdb1c35439f3fa694821a3e04b3a7d",
+			"keccak256": "0xc9e1d50ab01669d7d45344f306d23cadcf5d4ab50b484c6937cf5bba0efa2376",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://99de4608b322197e23badc9e7bb0d699242200c77e023f1b1ed37a3d84eb66e9",
-				"dweb:/ipfs/QmXUrcJpuKknhX9j8TboswwYMtwumJ6ZErQrgkE1kQyqY6"
+				"bzz-raw://c0ffb455b8e0a817db360f22b7843200f00e52e85b93a665153a854532b05ba4",
+				"dweb:/ipfs/QmQEeQuSLCTfubmkd52FsuGXGuVZ53h2ST8pAMMVniR4xz"
 			]
 		},
 		"contracts/YunaVaultFactory.sol": {

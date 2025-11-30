@@ -107,7 +107,7 @@ contract YunaVaultFactory {
     
         require(vaultAddr != address(0), "vault 0");
 
-        IVault(vaultAddr).token();
+        YunaVault(vaultAddr).token();
         YunaVault(payable(vaultAddr)).closeVault();
 
         address token = YunaVault(vaultAddr).token();

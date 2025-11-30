@@ -39,6 +39,8 @@
 		"methodIdentifiers": {
 			"amountMultipliers(uint256)": "a0660dfa",
 			"amountMultipliersLen()": "b9b792cd",
+			"getPositionsByAddress(address)": "0075844c",
+			"getPositionsPaginated(address,uint256,uint256,bool)": "6b53503a",
 			"getXP(address)": "639487f4",
 			"isActive()": "22f3e2d4",
 			"maxDeposit()": "6083e59a",
@@ -87,6 +89,86 @@
 					"internalType": "uint256",
 					"name": "",
 					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "user",
+					"type": "address"
+				}
+			],
+			"name": "getPositionsByAddress",
+			"outputs": [
+				{
+					"components": [
+						{
+							"internalType": "address",
+							"name": "user",
+							"type": "address"
+						},
+						{
+							"internalType": "uint256",
+							"name": "amount",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "startBlock",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "endBlock",
+							"type": "uint256"
+						},
+						{
+							"internalType": "bool",
+							"name": "claimed",
+							"type": "bool"
+						}
+					],
+					"internalType": "struct IVaultExtended.Position[]",
+					"name": "",
+					"type": "tuple[]"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "user",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "offset",
+					"type": "uint256"
+				},
+				{
+					"internalType": "uint256",
+					"name": "limit",
+					"type": "uint256"
+				},
+				{
+					"internalType": "bool",
+					"name": "_active",
+					"type": "bool"
+				}
+			],
+			"name": "getPositionsPaginated",
+			"outputs": [
+				{
+					"internalType": "uint256[]",
+					"name": "page",
+					"type": "uint256[]"
 				}
 			],
 			"stateMutability": "view",
