@@ -351,6 +351,102 @@
 				"inputs": [
 					{
 						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "getPositionsByAddress",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "user",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "amount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "startBlock",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "endBlock",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "claimed",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct YunaVault.Position[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getVaultAnalytics",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "totalStaked",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "activePositions",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "historyPositions",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "avgLockBlocks",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "avgAmount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "totalPositions",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "totalXP",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct YunaVault.VaultAnalytics",
+						"name": "info",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
 						"name": "holder",
 						"type": "address"
 					}
@@ -802,19 +898,19 @@
 			]
 		},
 		"contracts/YunaVault.sol": {
-			"keccak256": "0xc9e1d50ab01669d7d45344f306d23cadcf5d4ab50b484c6937cf5bba0efa2376",
+			"keccak256": "0x2ef2f6ed6644518cda8a671dedbab9d1c51cfeed33b8a6a26d4cf0315512af00",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://c0ffb455b8e0a817db360f22b7843200f00e52e85b93a665153a854532b05ba4",
-				"dweb:/ipfs/QmQEeQuSLCTfubmkd52FsuGXGuVZ53h2ST8pAMMVniR4xz"
+				"bzz-raw://29696a0b544ace9e9c138bfb73c6532ae76d3fb16c9aa2526eab3893076d122d",
+				"dweb:/ipfs/QmT9iR7kQyMhQCtA4Z1zgwSyv9kAGkiBhdT8iRM37u2Amg"
 			]
 		},
 		"contracts/YunaVaultFactory.sol": {
-			"keccak256": "0x7f65b97a04723a1db2ae90acc59620c78f2007ea1cf709aa1a6fe2e83b793147",
+			"keccak256": "0xabc79d3aea8587d8f4fde5e0dbcd85eee7628138934f09c3b88f992285fce10e",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://e12ea2ab91a102a2e64c6ec3660f95374ae180aa38426df45eb2f8a62796d20a",
-				"dweb:/ipfs/QmX6DC2Pt8rgRNK7kqLw26XxGbyq8KyXoqE5c1oiiZw2pX"
+				"bzz-raw://16a99dc06973fda07d006a4683364dc57e21b0b97ca3bb911442eab09a93ddaf",
+				"dweb:/ipfs/QmQxNCF1WPDbpGUJnC2tbfLtASfS3v9ZLz47qWqkuoBKH8"
 			]
 		}
 	},

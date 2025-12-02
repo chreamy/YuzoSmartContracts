@@ -351,4 +351,69 @@ contract YunaVault is ReentrancyGuard {
     function positionsLength() external view returns (uint256) {
         return positions.length;
     }
+
+    struct VaultAnalytics {
+    uint256 totalStaked;
+    uint256 activePositions;
+    uint256 historyPositions;
+    uint256 avgLockBlocks;
+    uint256 avgAmount;
+    uint256 totalPositions;
+    uint256 totalXP;
+    }
+
+    function getVaultAnalytics()
+    external
+    view
+    returns (VaultAnalytics memory info)
+{
+    uint256 totalLock = 0;
+    uint256 totalAmount = 0;
+    uint256 totalPos = 0;
+
+    address[] memory users = _participants;
+
+    for (uint256 i = 0; i < users.length; i++) {
+        address user = users[i];
+
+        // XP
+        try this.getXP(user) returns (uint256 xp_) {
+            info.totalXP += xp_;
+        } catch {}
+
+        // active + historical position IDs
+        uint256[] storage act = activePositions[user];
+        uint256[] storage hist = historyPositions[user];
+
+        info.activePositions += act.length;
+        info.historyPositions += hist.length;
+
+        // iterate active
+        for (uint256 j = 0; j < act.length; j++) {
+            Position storage p = positions[act[j]];
+            totalAmount += p.amount;
+            totalLock += (p.endBlock - p.startBlock);
+            totalPos++;
+        }
+
+        // iterate history
+        for (uint256 j = 0; j < hist.length; j++) {
+            Position storage p = positions[hist[j]];
+            totalAmount += p.amount;
+            totalLock += (p.endBlock - p.startBlock);
+            totalPos++;
+        }
+    }
+
+    info.totalPositions = totalPos;
+
+    if (totalPos > 0) {
+        info.avgLockBlocks = totalLock / totalPos;
+        info.avgAmount = totalAmount / totalPos;
+    }
+
+    info.totalStaked = totalAmount;
+    }
+
+
 }

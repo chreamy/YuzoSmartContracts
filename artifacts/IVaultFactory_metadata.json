@@ -274,11 +274,11 @@
 			]
 		},
 		"contracts/YunaVaultRouter.sol": {
-			"keccak256": "0x558d2f5b18e4941b4525f6960e11f901d2874bdf41518e59038e80b82cd934b3",
+			"keccak256": "0xa2bfaea33d2daed71fe0c2ffc054fba13931654e9cfd6449e6091622c669d434",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://d9f9bbc29f25e552538f6c4901397e5e4560452200c499863055a037b83128fb",
-				"dweb:/ipfs/QmeEBYMQ4qx9qc1BzqjGZpSD2KJQ5XHXF1DK8dWSfFcfdX"
+				"bzz-raw://9fcb8fbfd599f4bf18308669e19ef1c44cc37599eb86c768076ff5b2b9fb880d",
+				"dweb:/ipfs/QmfZhRTkDXPxmyvjCB8JjSoW5tmNF93A5HhyRDiaoxf1qP"
 			]
 		}
 	},

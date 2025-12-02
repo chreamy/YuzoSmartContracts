@@ -8,6 +8,25 @@
 			{
 				"inputs": [
 					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "activePositions",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "uint256",
 						"name": "index",
 						"type": "uint256"
@@ -123,6 +142,56 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "getVaultAnalytics",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "totalStaked",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "activePositions",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "historyPositions",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "avgLockBlocks",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "avgAmount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "totalPositions",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "totalXP",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct YunaVaultRouter.VaultAnalytics",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -136,6 +205,25 @@
 						"internalType": "uint256",
 						"name": "",
 						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "historyPositions",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
 					}
 				],
 				"stateMutability": "view",
@@ -175,6 +263,65 @@
 						"internalType": "uint256",
 						"name": "",
 						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "participants",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "index",
+						"type": "uint256"
+					}
+				],
+				"name": "positions",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "user",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "amount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "startBlock",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "endBlock",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "claimed",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct IVaultExtended.Position",
+						"name": "",
+						"type": "tuple"
 					}
 				],
 				"stateMutability": "view",
@@ -423,11 +570,11 @@
 			]
 		},
 		"contracts/YunaVaultRouter.sol": {
-			"keccak256": "0x558d2f5b18e4941b4525f6960e11f901d2874bdf41518e59038e80b82cd934b3",
+			"keccak256": "0xa2bfaea33d2daed71fe0c2ffc054fba13931654e9cfd6449e6091622c669d434",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://d9f9bbc29f25e552538f6c4901397e5e4560452200c499863055a037b83128fb",
-				"dweb:/ipfs/QmeEBYMQ4qx9qc1BzqjGZpSD2KJQ5XHXF1DK8dWSfFcfdX"
+				"bzz-raw://9fcb8fbfd599f4bf18308669e19ef1c44cc37599eb86c768076ff5b2b9fb880d",
+				"dweb:/ipfs/QmfZhRTkDXPxmyvjCB8JjSoW5tmNF93A5HhyRDiaoxf1qP"
 			]
 		}
 	},

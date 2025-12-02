@@ -37,14 +37,19 @@
 		},
 		"gasEstimates": null,
 		"methodIdentifiers": {
+			"activePositions(address)": "13d438b4",
 			"amountMultipliers(uint256)": "a0660dfa",
 			"amountMultipliersLen()": "b9b792cd",
 			"getPositionsByAddress(address)": "0075844c",
 			"getPositionsPaginated(address,uint256,uint256,bool)": "6b53503a",
+			"getVaultAnalytics()": "7c48b21c",
 			"getXP(address)": "639487f4",
+			"historyPositions(address)": "60b0e2ac",
 			"isActive()": "22f3e2d4",
 			"maxDeposit()": "6083e59a",
 			"minDeposit()": "41b3d185",
+			"participants()": "6c4470fb",
+			"positions(uint256)": "99fbab88",
 			"presetTimes(uint256)": "10390d35",
 			"presetTimesLen()": "359cfbf7",
 			"releaseAll(address)": "580fc80a",
@@ -57,6 +62,25 @@
 		}
 	},
 	"abi": [
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "user",
+					"type": "address"
+				}
+			],
+			"name": "activePositions",
+			"outputs": [
+				{
+					"internalType": "uint256[]",
+					"name": "",
+					"type": "uint256[]"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
 		{
 			"inputs": [
 				{
@@ -175,6 +199,56 @@
 			"type": "function"
 		},
 		{
+			"inputs": [],
+			"name": "getVaultAnalytics",
+			"outputs": [
+				{
+					"components": [
+						{
+							"internalType": "uint256",
+							"name": "totalStaked",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "activePositions",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "historyPositions",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "avgLockBlocks",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "avgAmount",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "totalPositions",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "totalXP",
+							"type": "uint256"
+						}
+					],
+					"internalType": "struct YunaVaultRouter.VaultAnalytics",
+					"name": "",
+					"type": "tuple"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
 			"inputs": [
 				{
 					"internalType": "address",
@@ -188,6 +262,25 @@
 					"internalType": "uint256",
 					"name": "",
 					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "user",
+					"type": "address"
+				}
+			],
+			"name": "historyPositions",
+			"outputs": [
+				{
+					"internalType": "uint256[]",
+					"name": "",
+					"type": "uint256[]"
 				}
 			],
 			"stateMutability": "view",
@@ -227,6 +320,65 @@
 					"internalType": "uint256",
 					"name": "",
 					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "participants",
+			"outputs": [
+				{
+					"internalType": "address[]",
+					"name": "",
+					"type": "address[]"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "index",
+					"type": "uint256"
+				}
+			],
+			"name": "positions",
+			"outputs": [
+				{
+					"components": [
+						{
+							"internalType": "address",
+							"name": "user",
+							"type": "address"
+						},
+						{
+							"internalType": "uint256",
+							"name": "amount",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "startBlock",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "endBlock",
+							"type": "uint256"
+						},
+						{
+							"internalType": "bool",
+							"name": "claimed",
+							"type": "bool"
+						}
+					],
+					"internalType": "struct IVaultExtended.Position",
+					"name": "",
+					"type": "tuple"
 				}
 			],
 			"stateMutability": "view",

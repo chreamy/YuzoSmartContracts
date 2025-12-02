@@ -31,6 +31,14 @@ interface IVaultExtended {
     function releaseFor(address user, address caller) external;
     function releaseAll(address caller) external;
     function getXP(address holder) external view returns (uint256);
+    function participants() external view returns (address[] memory);
+    function positions(uint256 index) external view returns (Position memory);
+    function activePositions(address user) external view returns (uint256[] memory);
+    function historyPositions(address user) external view returns (uint256[] memory);
+    function getVaultAnalytics()
+    external
+    view
+    returns (YunaVaultRouter.VaultAnalytics memory);
 }
 
 interface IVaultFactory {
@@ -57,6 +65,7 @@ interface IVaultFactory {
     function setFees(uint256 protocolFeeBP, uint256 callerFeeBP) external;
     function protocolFeeBP() external view returns (uint256);
     function callerFeeBP() external view returns (uint256);
+
 }
 
 contract YunaVaultRouter is Ownable {
@@ -299,6 +308,48 @@ contract YunaVaultRouter is Ownable {
 }
 
 
+    struct UserXP {
+    address user;
+    uint256 xp;
+    }
+
+    function getVaultLeaderboardXP(address vault)
+    external
+    view
+    returns (UserXP[] memory leaderboard)
+{
+    IVaultExtended v = IVaultExtended(vault);
+
+    // get all users known to the factory for this vault
+    address[] memory users = v.participants();
+
+    leaderboard = new UserXP[](users.length);
+
+    for (uint256 i; i < users.length; i++) {
+        uint256 xp = 0;
+        try v.getXP(users[i]) returns (uint256 xp_) {
+            xp = xp_;
+        } catch {}
+
+        leaderboard[i] = UserXP({
+            user: users[i],
+            xp: xp
+        });
+    }
+
+    // sort (descending xp)
+    for (uint256 a = 0; a < leaderboard.length; a++) {
+        for (uint256 b = a + 1; b < leaderboard.length; b++) {
+            if (leaderboard[b].xp > leaderboard[a].xp) {
+                UserXP memory temp = leaderboard[a];
+                leaderboard[a] = leaderboard[b];
+                leaderboard[b] = temp;
+            }
+        }
+    }
+}
+
+
     function getAllVaultInfo() external view returns (VaultInfo[] memory results) {
         address[] memory vaults = IVaultFactory(factory).getAllVaults();
         results = new VaultInfo[](vaults.length);
@@ -307,6 +358,24 @@ contract YunaVaultRouter is Ownable {
             results[i] = this.getVaultInfo(vaults[i]);
         }
     }
+
+    struct VaultAnalytics {
+    uint256 totalStaked;
+    uint256 activePositions;
+    uint256 historyPositions;
+    uint256 avgLockBlocks;
+    uint256 avgAmount;
+    uint256 totalPositions;
+    uint256 totalXP;
+    }
+
+    function getVaultAnalytics(address vault)
+    external
+    view
+    returns (VaultAnalytics memory info)
+{
+    info = IVaultExtended(vault).getVaultAnalytics();
+}
 
 
 }

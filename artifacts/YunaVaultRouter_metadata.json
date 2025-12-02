@@ -415,6 +415,62 @@
 				"inputs": [
 					{
 						"internalType": "address",
+						"name": "vault",
+						"type": "address"
+					}
+				],
+				"name": "getVaultAnalytics",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "totalStaked",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "activePositions",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "historyPositions",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "avgLockBlocks",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "avgAmount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "totalPositions",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "totalXP",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct YunaVaultRouter.VaultAnalytics",
+						"name": "info",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
 						"name": "token",
 						"type": "address"
 					}
@@ -510,6 +566,37 @@
 						"internalType": "struct YunaVaultRouter.VaultInfo",
 						"name": "info",
 						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "vault",
+						"type": "address"
+					}
+				],
+				"name": "getVaultLeaderboardXP",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "user",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "xp",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct YunaVaultRouter.UserXP[]",
+						"name": "leaderboard",
+						"type": "tuple[]"
 					}
 				],
 				"stateMutability": "view",
@@ -791,11 +878,11 @@
 			]
 		},
 		"contracts/YunaVaultRouter.sol": {
-			"keccak256": "0x558d2f5b18e4941b4525f6960e11f901d2874bdf41518e59038e80b82cd934b3",
+			"keccak256": "0xa2bfaea33d2daed71fe0c2ffc054fba13931654e9cfd6449e6091622c669d434",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://d9f9bbc29f25e552538f6c4901397e5e4560452200c499863055a037b83128fb",
-				"dweb:/ipfs/QmeEBYMQ4qx9qc1BzqjGZpSD2KJQ5XHXF1DK8dWSfFcfdX"
+				"bzz-raw://9fcb8fbfd599f4bf18308669e19ef1c44cc37599eb86c768076ff5b2b9fb880d",
+				"dweb:/ipfs/QmfZhRTkDXPxmyvjCB8JjSoW5tmNF93A5HhyRDiaoxf1qP"
 			]
 		}
 	},
