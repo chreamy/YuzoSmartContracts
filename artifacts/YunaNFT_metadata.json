@@ -316,6 +316,13 @@
 			},
 			{
 				"inputs": [],
+				"name": "disableMinting",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
 				"name": "factory",
 				"outputs": [
 					{
@@ -421,6 +428,19 @@
 					}
 				],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "mintingEnabled",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -987,11 +1007,11 @@
 			]
 		},
 		"contracts/YunaNFT.sol": {
-			"keccak256": "0x359b688c7b651838d0dfeeb24cdcb51f704b6a83e06e77c1a4f41ebf6c87b8ca",
+			"keccak256": "0xde21ec544e785020c6b1a9637cdbafa2ca54666bccb18aadbcdbfb54dbbbb5d6",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://6dad044cdb5bb72dc4946bd1f04c00e95808f2c8e2f75b20338c74a47e748776",
-				"dweb:/ipfs/QmdyzSb42gGUFTRfYLj49gdoYXXeq126zkv97Q7qonga5Z"
+				"bzz-raw://1949b9fa18014a0e50939e40adf441cd2a7e3063e83061775eb9a7e039325e13",
+				"dweb:/ipfs/QmUZsyvsBKtube7oMAFMxZ6VCnHAiuSuaQw5pjAi6rYTyb"
 			]
 		}
 	},

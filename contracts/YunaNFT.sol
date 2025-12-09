@@ -7,13 +7,14 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 
-contract YunaNFT is ERC721URIStorage, Ownable {
+contract BRC721 is ERC721URIStorage, Ownable {
+    //Open source BRC721 standard by Yuzo Inc.
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    // On-chain image storage (optional)
     mapping(uint256 => string) private _tokenImages;
     address public factory;
+    bool public mintingEnabled = true;
 
     constructor(
         address initialOwner,
@@ -22,12 +23,16 @@ contract YunaNFT is ERC721URIStorage, Ownable {
     ) ERC721(name_, symbol_) Ownable(initialOwner) {
         factory = msg.sender;
     }
-    
+
     modifier onlyOwnerOrFactory() {
-    require(msg.sender == owner() || msg.sender == factory, "Not authorized");
-    _;
+        require(
+            (msg.sender == owner() || msg.sender == factory) && mintingEnabled,
+            "Not authorized or minting disabled"
+        );
+        _;
     }
 
+    // Mint function
     function mintWithIPFS(
         address recipient, 
         string memory imageURI,
@@ -57,7 +62,16 @@ contract YunaNFT is ERC721URIStorage, Ownable {
         return newTokenId;
     }
 
-    function getTokenImage(uint256 tokenId) public view returns (string memory) {
+    function disableMinting() external onlyOwner {
+        mintingEnabled = false;
+    }
+
+    function renounceOwnership() public override onlyOwner {
+        mintingEnabled = false; 
+        super.renounceOwnership();
+    }
+
+     function getTokenImage(uint256 tokenId) public view returns (string memory) {
         require(_ownerOf(tokenId) != address(0), "Token does not exist");
         return _tokenImages[tokenId];
     }
