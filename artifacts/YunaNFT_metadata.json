@@ -6,7 +6,23 @@
 	"output": {
 		"abi": [
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "initialOwner",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "name_",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "symbol_",
+						"type": "string"
+					}
+				],
 				"stateMutability": "nonpayable",
 				"type": "constructor"
 			},
@@ -299,6 +315,26 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "disableMinting",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "factory",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "uint256",
@@ -369,40 +405,6 @@
 					},
 					{
 						"internalType": "string",
-						"name": "base64Image",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "name",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "description",
-						"type": "string"
-					}
-				],
-				"name": "mintWithBase64",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "recipient",
-						"type": "address"
-					},
-					{
-						"internalType": "string",
 						"name": "imageURI",
 						"type": "string"
 					},
@@ -426,6 +428,19 @@
 					}
 				],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "mintingEnabled",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -791,9 +806,6 @@
 				"tokenURI(uint256)": {
 					"details": "Returns the Uniform Resource Identifier (URI) for `tokenId` token."
 				},
-				"totalSupply()": {
-					"details": "Returns the total number of tokens minted"
-				},
 				"transferFrom(address,address,uint256)": {
 					"details": "Transfers `tokenId` token from `from` to `to`. WARNING: Note that the caller is responsible to confirm that the recipient is capable of receiving ERC-721 or else they may be permanently lost. Usage of {safeTransferFrom} prevents loss, though the caller must understand this adds an external call which potentially creates a reentrancy vulnerability. Requirements: - `from` cannot be the zero address. - `to` cannot be the zero address. - `tokenId` token must be owned by `from`. - If the caller is not `from`, it must be approved to move this token by either {approve} or {setApprovalForAll}. Emits a {Transfer} event."
 				},
@@ -819,10 +831,11 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
+			"enabled": true,
 			"runs": 200
 		},
-		"remappings": []
+		"remappings": [],
+		"viaIR": true
 	},
 	"sources": {
 		"@openzeppelin/contracts/access/Ownable.sol": {
@@ -994,11 +1007,11 @@
 			]
 		},
 		"contracts/YunaNFT.sol": {
-			"keccak256": "0xdc299a52bdf3118f524d1a46298a2ecc20847550eb35b8051e9e29b519214688",
+			"keccak256": "0xde21ec544e785020c6b1a9637cdbafa2ca54666bccb18aadbcdbfb54dbbbb5d6",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://68a247b8f73e0129a16a1c9ad50d705ec2a747d61ec3b08ce226adcdbcf0a58a",
-				"dweb:/ipfs/QmT9C9uGntUDkDCFyEbcmuoxoRLWgs1G2yQEoHkg635EkF"
+				"bzz-raw://1949b9fa18014a0e50939e40adf441cd2a7e3063e83061775eb9a7e039325e13",
+				"dweb:/ipfs/QmUZsyvsBKtube7oMAFMxZ6VCnHAiuSuaQw5pjAi6rYTyb"
 			]
 		}
 	},
