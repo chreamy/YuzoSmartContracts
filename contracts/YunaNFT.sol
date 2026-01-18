@@ -1,34 +1,82 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-interface IERC20 {
-    function transfer(address to, uint256 amount) external returns (bool);
-}
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
 
-contract Airdrop {
-    address public owner;
+contract BRC721 is ERC721URIStorage, Ownable {
+    //Open source BRC721 standard by Yuzo Inc.
+    using Counters for Counters.Counter;
+    Counters.Counter private _tokenIds;
 
-    event AirdropSent(address indexed to, uint256 amount);
+    mapping(uint256 => string) private _tokenImages;
+    address public factory;
+    bool public mintingEnabled = true;
 
-    constructor() {
-        owner = msg.sender;
+    constructor(
+        address initialOwner,
+        string memory name_,
+        string memory symbol_
+    ) ERC721(name_, symbol_) Ownable(initialOwner) {
+        factory = msg.sender;
     }
 
-    function airdrop(
-        address token,
-        address[] calldata addresses,
-        uint256[] calldata amounts
-    ) external {
-        require(addresses.length == amounts.length, "invalid array length");
+    modifier onlyOwnerOrFactory() {
+        require(
+            (msg.sender == owner() || msg.sender == factory) && mintingEnabled,
+            "Not authorized or minting disabled"
+        );
+        _;
+    }
 
-        IERC20 erc20 = IERC20(token);
+    // Mint function
+    function mintWithIPFS(
+        address recipient, 
+        string memory imageURI,
+        string memory name,
+        string memory description
+    ) public onlyOwnerOrFactory returns (uint256) {
+        _tokenIds.increment();
+        uint256 newTokenId = _tokenIds.current();
 
-        for (uint256 i = 0; i < addresses.length; i++) {
-            require(
-                erc20.transfer(addresses[i], amounts[i]),
-                "Failed to send tokens"
-            );
-            emit AirdropSent(addresses[i], amounts[i]);
-        }
+        string memory metadata = string(
+            abi.encodePacked(
+                '{"name":"', name,
+                '","description":"', description,
+                '","image":"', imageURI,
+                '"}'
+            )
+        );
+
+        string memory encoded = Base64.encode(bytes(metadata));
+        string memory tokenURI = string(
+            abi.encodePacked("data:application/json;base64,", encoded)
+        );
+
+        _mint(recipient, newTokenId);
+        _setTokenURI(newTokenId, tokenURI);
+
+        return newTokenId;
+    }
+
+    function disableMinting() external onlyOwner {
+        mintingEnabled = false;
+    }
+
+    function renounceOwnership() public override onlyOwner {
+        mintingEnabled = false; 
+        super.renounceOwnership();
+    }
+
+     function getTokenImage(uint256 tokenId) public view returns (string memory) {
+        require(_ownerOf(tokenId) != address(0), "Token does not exist");
+        return _tokenImages[tokenId];
+    }
+
+    function totalSupply() public view returns (uint256) {
+        return _tokenIds.current();
     }
 }
