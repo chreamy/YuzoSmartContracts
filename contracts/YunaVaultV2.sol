@@ -11,7 +11,6 @@ contract YunaVaultV2 is ReentrancyGuard, Ownable {
 
     IERC20 public immutable lpToken;
     IERC20 public immutable rewardToken;
-    address public immutable protocol;
     uint256 public immutable rewardPerBlock;
 
     address public router;
@@ -43,12 +42,10 @@ contract YunaVaultV2 is ReentrancyGuard, Ownable {
 
     constructor(
         address _lpToken,
-        address _rewardToken,
-        address _protocol
+        address _rewardToken
     ) Ownable(msg.sender) {
         lpToken = IERC20(_lpToken);
         rewardToken = IERC20(_rewardToken);
-        protocol = _protocol;
 
         uint8 decimals = IERC20Metadata(_rewardToken).decimals();
         uint256 blocksPerYear = 52_560; // 10 min blocks
@@ -94,7 +91,7 @@ contract YunaVaultV2 is ReentrancyGuard, Ownable {
     }
 
     function _depositFor(address from, address user, uint256 amount) internal {
-        require(amount > 0, "zero deposit");
+        require(amount > 20000000000000, "low deposit");
 
         _updateUserXP(user);
 
@@ -135,10 +132,11 @@ contract YunaVaultV2 is ReentrancyGuard, Ownable {
     }
 
     function claimAll() external nonReentrant {
+        uint256 rewardBalance = rewardToken.balanceOf(address(this));
         uint256 blocks = block.number - lastRewardBlock;
-        if (blocks == 0 || totalXP == 0) return;
+        if (blocks == 0) return;
 
-        uint256 pool = blocks * rewardPerBlock;
+        uint256 pool = blocks * rewardPerBlock > rewardBalance ? rewardBalance : blocks * rewardPerBlock;
 
         for (uint256 i = 0; i < participants.length; i++) {
             User storage u = users[participants[i]];
@@ -220,4 +218,12 @@ contract YunaVaultV2 is ReentrancyGuard, Ownable {
 
         return xp;
     }
+
+    function withdrawAllRewards() external onlyOwner {
+        uint256 balance = rewardToken.balanceOf(address(this));
+        require(balance > 0, "no rewards");
+
+        rewardToken.safeTransfer(owner(), balance);
+    }
+
 }

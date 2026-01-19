@@ -16,11 +16,6 @@
 						"internalType": "address",
 						"name": "_rewardToken",
 						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "_protocol",
-						"type": "address"
 					}
 				],
 				"stateMutability": "nonpayable",
@@ -323,19 +318,6 @@
 			},
 			{
 				"inputs": [],
-				"name": "protocol",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
 				"name": "remainingRewardPool",
 				"outputs": [
 					{
@@ -493,6 +475,13 @@
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "withdrawAllRewards",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
 			}
 		],
 		"devdoc": {
@@ -631,11 +620,11 @@
 			]
 		},
 		"contracts/YunaVaultV2.sol": {
-			"keccak256": "0xb5e83c3c2b3a8efc2a245be01a176942ff1dca07671d2131a0a838cc173b3ebe",
+			"keccak256": "0x6011fd9179cecbc0846ba2a84972c8e5346f45daf280c6352cc6cf081e77e28f",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://85ee7abafd77512719f9fa7a57f0dd27311c8f26dca14f9179abbb621340e416",
-				"dweb:/ipfs/QmTzkBwxTSUAPqJL3YpG1H9dZzhVWdTepYWhDsGPfTD1Yo"
+				"bzz-raw://35b0ea9fbef6e4ca949f3e0b242b02dc54e58ce9a5719713f154b4f0c6a3011e",
+				"dweb:/ipfs/QmeYEjacT75qDUjeGrSzSLAuDq2qRK4jopMincxe6ntpkZ"
 			]
 		}
 	},
