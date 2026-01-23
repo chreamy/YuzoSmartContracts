@@ -246,6 +246,25 @@
 				"type": "function"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "isParticipant",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "lastRewardBlock",
 				"outputs": [
@@ -620,11 +639,11 @@
 			]
 		},
 		"contracts/YunaVaultV2.sol": {
-			"keccak256": "0x6011fd9179cecbc0846ba2a84972c8e5346f45daf280c6352cc6cf081e77e28f",
+			"keccak256": "0xcbe984b9083b676e59e16b04e9b8e0f9e80b930c07821d857f99b4b6d57348dd",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://35b0ea9fbef6e4ca949f3e0b242b02dc54e58ce9a5719713f154b4f0c6a3011e",
-				"dweb:/ipfs/QmeYEjacT75qDUjeGrSzSLAuDq2qRK4jopMincxe6ntpkZ"
+				"bzz-raw://1ae8cf8407273d083c01453d9f271ab5e412364405e53e3033c2faf969abf1ea",
+				"dweb:/ipfs/QmPvQNvjLwDL7xSWT2Za7J3rx1kiQYM2KNuQmKmw2goRzm"
 			]
 		}
 	},

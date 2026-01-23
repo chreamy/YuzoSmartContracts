@@ -12,6 +12,7 @@ contract YunaVaultV2 is ReentrancyGuard, Ownable {
     IERC20 public immutable lpToken;
     IERC20 public immutable rewardToken;
     uint256 public immutable rewardPerBlock;
+    mapping(address => bool) public isParticipant;
 
     address public router;
 
@@ -91,14 +92,19 @@ contract YunaVaultV2 is ReentrancyGuard, Ownable {
     }
 
     function _depositFor(address from, address user, uint256 amount) internal {
-        require(amount > 20000000000000, "low deposit");
+        require(amount >= 21000000000000, "low deposit");
 
         _updateUserXP(user);
 
         lpToken.safeTransferFrom(from, address(this), amount);
 
+        
+        if (!isParticipant[user]) {
+            isParticipant[user] = true;
+            participants.push(user);
+        }
+
         User storage u = users[user];
-        if (u.balance == 0) participants.push(user);
         u.balance += amount;
 
         emit Deposited(user, amount);
@@ -173,31 +179,52 @@ contract YunaVaultV2 is ReentrancyGuard, Ownable {
     }
 
     function claimableReward(address userAddr) external view returns (uint256) {
-        User storage u = users[userAddr];
-        if (u.balance == 0) return 0;
-
         uint256 blocks = block.number - lastRewardBlock;
         if (blocks == 0) return 0;
 
-        uint256 userXP = u.xp;
-        if (u.lastUpdateBlock > 0) {
-            userXP += (block.number - u.lastUpdateBlock) * u.balance;
-        }
+        uint256 rewardBalance = rewardToken.balanceOf(address(this));
+        uint256 rawPool = blocks * rewardPerBlock;
+        uint256 pool = rawPool > rewardBalance ? rewardBalance : rawPool;
+        if (pool == 0) return 0;
 
-        if (userXP == 0) return 0;
-
-        uint256 simulatedTotalXP = totalXP + userXP;
-        uint256 pool = blocks * rewardPerBlock;
         uint256 callerFee = (pool * CALLER_FEE_BP) / BP_DENOM;
         uint256 distributable = pool - callerFee;
+
+        uint256 simulatedTotalXP = totalXP;
+        uint256 userXP;
+
+        // Simulate XP update exactly like claimAll()
+        for (uint256 i = 0; i < participants.length; i++) {
+            address p = participants[i];
+            User storage u = users[p];
+            if (u.balance == 0) continue;
+
+            uint256 gainedXP = 0;
+            if (u.lastUpdateBlock > 0) {
+                gainedXP = (block.number - u.lastUpdateBlock) * u.balance;
+            }
+
+            uint256 finalXP = u.xp + gainedXP;
+            simulatedTotalXP += gainedXP;
+
+            if (p == userAddr) {
+                userXP = finalXP;
+            }
+        }
+
+        if (userXP == 0 || simulatedTotalXP == 0) return 0;
 
         return (distributable * userXP) / simulatedTotalXP;
     }
 
+
     function remainingRewardPool() external view returns (uint256) {
         uint256 blocks = block.number - lastRewardBlock;
+        uint256 rewardBalance = rewardToken.balanceOf(address(this));
+        uint256 rawPool = blocks * rewardPerBlock;
+        uint256 pool = rawPool > rewardBalance ? rewardBalance : rawPool;
         if (blocks == 0) return 0;
-        return blocks * rewardPerBlock;
+        return pool;
     }
 
     function totalLPLocked() external view returns (uint256) {
